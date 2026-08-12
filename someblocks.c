@@ -28,7 +28,7 @@ typedef struct {
 } Block;
 
 typedef struct {
-    Block *block;
+    const Block *block;
     unsigned int i;
 } ThreadData;
 
@@ -41,7 +41,8 @@ void setupsignals();
 void sighandler(int signum);
 int getstatus(char *str, char *last);
 void statusloop();
-void termhandler();
+void termhandler(int sig);
+void sigpipehandler(int sig);
 void pstdout();
 void psomebar();
 static void (*writestatus) () = psomebar;
@@ -76,12 +77,12 @@ void getcmd(const Block *block, char *output)
 	if (delim[0] != '\0' && i != 0) {
 		//only chop off newline if one is present at the end
 		i = output1[i-1] == '\n' ? i-1 : i;
-		strncpy(output1+i, delim, delimLen); 
+		strncpy(output1+i, delim, delimLen);
 	}
 	else
 		output1[i++] = '\0';
 
-    // lock 
+    // lock
     pthread_mutex_lock(&lock);
     strcpy(output, output1);
     // unlock
@@ -217,8 +218,8 @@ void psomebar()
 void statusloop()
 {
 	setupsignals();
-    
-    startthreads();  
+
+    startthreads();
 
     for(int i = 0; i < LENGTH(blocks); i++) {
         pthread_join(threads[i], NULL);
@@ -239,15 +240,17 @@ void sighandler(int signum)
 	writestatus();
 }
 
-void termhandler()
+void termhandler(int sig)
 {
 	statusContinue = 0;
+	(void)sig;  // optional, silences unused parameter warning
 }
 
-void sigpipehandler()
+void sigpipehandler(int sig)
 {
 	close(somebarFd);
 	somebarFd = -1;
+	(void)sig;
 }
 
 int main(int argc, char** argv)
