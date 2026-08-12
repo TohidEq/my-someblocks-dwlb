@@ -1,4 +1,4 @@
-# This is a fork of [kolunmi/dwlb](https://github.com/kolunmi/dwlb)  
+# This is a fork of [kolunmi/dwlb](https://github.com/kolunmi/dwlb)
 Things I changed:
 1. Blocks are executed asynchronously
 2. When block output is empty dont add delim to output
@@ -14,14 +14,26 @@ to connect to somebar instead of dwm.
 
 The mailing list for this project is
 [~raphi/public-inbox@lists.sr.ht](mailto:~raphi/public-inbox@lists.sr.ht).
+
 # usage
 To use someblocks first run 'make' and then install it with 'sudo make install'.
 After that you can put someblocks in your startup script to have it start with dwl/somebar.
+
+## dwlb + someblocks
+```sh
+someblocks -p | dwlb -status-stdin all
+```
+or
+```sh
+someblocks -p | dwlb -status-stdin all &
+```
+
 # modifying blocks
 The statusbar is made from text output from commandline programs.
 Blocks are added and removed by editing the blocks.h header file.
 By default the blocks.h header file is created the first time you run make which copies the default config from blocks.def.h.
 This is so you can edit your status bar commands and they will not get overwritten in a future update.
+
 # patches
 Here are some patches to someblocks that add features that I either don't want to merge in, or that require a dwl/somebar patch to work.
 I do not maintain these but I will take pull requests to update them.
